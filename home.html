@@ -246,6 +246,16 @@ document.getElementById("search")
 
 function buyNow(name,price){
 
+    const address =
+    prompt("Enter Delivery Address");
+
+    if(!address){
+
+        alert("Address required");
+        return;
+
+    }
+
     fetch(API_URL,{
 
         method:"POST",
@@ -254,6 +264,7 @@ function buyNow(name,price){
 
             action:"order",
             customer:user.name,
+            address:address,
             medicine:name,
             total:price
 
@@ -264,6 +275,8 @@ function buyNow(name,price){
     .then(data=>{
 
         alert(data.message);
+
+        location.reload();
 
     });
 
