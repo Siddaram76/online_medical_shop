@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f3f7fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    width:350px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+h2{
+    text-align:center;
+    color:#0f9d58;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#0f9d58;
+    color:white;
+    border:none;
+    border-radius:10px;
+    margin-top:20px;
+    cursor:pointer;
+}
+
+a{
+    color:#0f9d58;
+    text-decoration:none;
+}
+
+p{
+    text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Create Account</h2>
+
+<input type="text" id="name" placeholder="Full Name">
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="register()">Register</button>
+
+<p>
+Already have account?
+<a href="login.html">Login</a>
+</p>
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxW4h_sh_Jt7gS12JGBXb0QGeXwo4DwG1kAZrSoFEbO16rkbW6cMC6rgbaNPZEedx0T/exec";
+
+function register(){
+
+    let name =
+    document.getElementById("name").value;
+
+    let email =
+    document.getElementById("email").value;
+
+    let password =
+    document.getElementById("password").value;
+
+    fetch(API_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+            action:"register",
+            name:name,
+            email:email,
+            password:password
+
+        })
+
+    })
+    .then(res=>res.json())
+    .then(data=>{
+
+        alert(data.message);
+
+        if(data.status=="success"){
+
+            window.location.href="index.html";
+
+        }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
