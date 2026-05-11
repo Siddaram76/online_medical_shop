@@ -1,8 +1,3 @@
-<!-- =========================================
-3. HOME PAGE
-SAVE AS: index.html
-========================================= -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,8 +20,6 @@ SAVE AS: index.html
 body{
     background:#f4f7fb;
 }
-
-/* HEADER */
 
 header{
     background:#0f9d58;
@@ -51,20 +44,12 @@ header{
     cursor:pointer;
 }
 
-/* HERO */
-
 .hero{
     background:linear-gradient(to right,#0f9d58,#34a853);
     color:white;
     text-align:center;
     padding:50px 20px;
 }
-
-.hero h1{
-    font-size:40px;
-}
-
-/* SEARCH */
 
 .search-box{
     max-width:500px;
@@ -77,11 +62,7 @@ header{
     padding:14px;
     border:none;
     border-radius:12px;
-    font-size:16px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
-
-/* PRODUCTS */
 
 .container{
     padding:20px;
@@ -110,23 +91,10 @@ header{
     padding:15px;
 }
 
-.card h2{
-    margin-bottom:10px;
-}
-
 .price{
     color:#0f9d58;
     font-size:22px;
     font-weight:bold;
-}
-
-.desc{
-    color:#666;
-    margin:10px 0;
-}
-
-.stock{
-    margin-bottom:15px;
 }
 
 .btn{
@@ -137,6 +105,7 @@ header{
     background:#0f9d58;
     color:white;
     cursor:pointer;
+    margin-top:10px;
 }
 
 footer{
@@ -195,12 +164,19 @@ placeholder="Search medicines...">
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxW4h_sh_Jt7gS12JGBXb0QGeXwo4DwG1kAZrSoFEbO16rkbW6cMC6rgbaNPZEedx0T/exec";
 
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+
+    window.location.href="login.html";
+
+}
+
 let medicines = [];
 
 const products =
 document.getElementById("products");
-
-/* LOAD PRODUCTS */
 
 fetch(API_URL + "?action=medicines")
 .then(res=>res.json())
@@ -211,8 +187,6 @@ fetch(API_URL + "?action=medicines")
     displayProducts(medicines);
 
 });
-
-/* DISPLAY PRODUCTS */
 
 function displayProducts(items){
 
@@ -234,16 +208,14 @@ function displayProducts(items){
                 ₹${item.price}
                 </div>
 
-                <div class="desc">
-                ${item.description}
-                </div>
+                <p>${item.description}</p>
 
-                <div class="stock">
+                <p>
                 Stock: ${item.stock}
-                </div>
+                </p>
 
                 <button class="btn"
-                onclick="buyNow('${item.name}')">
+                onclick="buyNow('${item.name}',${item.price})">
                 Buy Now
                 </button>
 
@@ -256,8 +228,6 @@ function displayProducts(items){
     });
 
 }
-
-/* SEARCH */
 
 document.getElementById("search")
 .addEventListener("keyup",function(){
@@ -274,25 +244,30 @@ document.getElementById("search")
 
 });
 
-/* BUY NOW */
+function buyNow(name,price){
 
-function buyNow(name){
+    fetch(API_URL,{
 
-    const phone = "918904217557";
+        method:"POST",
 
-    const msg =
-`Hello,
-I want to order:
+        body:JSON.stringify({
 
-${name}`;
+            action:"order",
+            customer:user.name,
+            medicine:name,
+            total:price
 
-    window.open(
-`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
-    );
+        })
+
+    })
+    .then(res=>res.json())
+    .then(data=>{
+
+        alert(data.message);
+
+    });
 
 }
-
-/* LOGOUT */
 
 function logout(){
 
