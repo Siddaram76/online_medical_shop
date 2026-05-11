@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Online Medical Shop</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+}
+
+header{
+    background:#0f9d58;
+    color:white;
+    padding:15px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:700;
+}
+
+.logout{
+    background:white;
+    color:#0f9d58;
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.hero{
+    background:linear-gradient(to right,#0f9d58,#34a853);
+    color:white;
+    text-align:center;
+    padding:50px 20px;
+}
+
+.search-box{
+    max-width:500px;
+    margin:20px auto;
+    padding:0 15px;
+}
+
+.search-box input{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+}
+
+.container{
+    padding:20px;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:15px;
+}
+
+.price{
+    color:#0f9d58;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#0f9d58;
+    color:white;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+footer{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:20px;
+    margin-top:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+💊 Online Medical Shop
+</div>
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
+</header>
+
+<section class="hero">
+
+<h1>Your Trusted Medical Store</h1>
+
+<p>Buy medicines online easily</p>
+
+</section>
+
+<div class="search-box">
+
+<input type="text"
+id="search"
+placeholder="Search medicines...">
+
+</div>
+
+<div class="container">
+
+<div class="products" id="products"></div>
+
+</div>
+
+<footer>
+© 2026 Online Medical Shop
+</footer>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxW4h_sh_Jt7gS12JGBXb0QGeXwo4DwG1kAZrSoFEbO16rkbW6cMC6rgbaNPZEedx0T/exec";
+
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+
+    window.location.href="login.html";
+
+}
+
+let medicines = [];
+
+const products =
+document.getElementById("products");
+
+fetch(API_URL + "?action=medicines")
+.then(res=>res.json())
+.then(data=>{
+
+    medicines = data;
+
+    displayProducts(medicines);
+
+});
+
+function displayProducts(items){
+
+    products.innerHTML="";
+
+    items.forEach(item=>{
+
+        products.innerHTML += `
+
+        <div class="card">
+
+            <img src="${item.image}">
+
+            <div class="card-content">
+
+                <h2>${item.name}</h2>
+
+                <div class="price">
+                ₹${item.price}
+                </div>
+
+                <p>${item.description}</p>
+
+                <p>
+                Stock: ${item.stock}
+                </p>
+
+                <button class="btn"
+                onclick="buyNow('${item.name}',${item.price})">
+                Buy Now
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+document.getElementById("search")
+.addEventListener("keyup",function(){
+
+    let value =
+    this.value.toLowerCase();
+
+    let filtered =
+    medicines.filter(item=>
+    item.name.toLowerCase()
+    .includes(value));
+
+    displayProducts(filtered);
+
+});
+
+function buyNow(name,price){
+
+    fetch(API_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+            action:"order",
+            customer:user.name,
+            medicine:name,
+            total:price
+
+        })
+
+    })
+    .then(res=>res.json())
+    .then(data=>{
+
+        alert(data.message);
+
+    });
+
+}
+
+function logout(){
+
+    localStorage.removeItem("user");
+
+    window.location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>
